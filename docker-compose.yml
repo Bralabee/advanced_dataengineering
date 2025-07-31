@@ -1,5 +1,34 @@
 version: '3.8'
 services:
+  postgres:
+    image: postgres:15
+    environment:
+      - POSTGRES_USER=airflow
+      - POSTGRES_PASSWORD=airflow
+      - POSTGRES_DB=airflow
+    ports:
+      - "5436:5436"
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U airflow"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  airflow-scheduler:
+    image: apache/airflow:2.9.1
+    environment:
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+      - AIRFLOW__DATABASE__LOAD_DEFAULT_CONNECTIONS=False
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+    depends_on:
+      - postgres
+    entrypoint: ["/opt/airflow-init.sh"]
+    command: ["airflow", "scheduler"]
+    volumes:
+      - ./airflow:/opt/airflow
+      - ./airflow-init.sh:/opt/airflow-init.sh
   azurite:
     image: mcr.microsoft.com/azure-storage/azurite
     ports:
@@ -9,18 +38,25 @@ services:
     volumes:
       - ./azurite_data:/data
     command: "azurite-blob --blobHost 0.0.0.0 --location /data"
+    profiles:
+      - local
 
   airflow:
-    image: quay.io/astronomer/astro-runtime:9.2.0
+    image: apache/airflow:2.9.1
     environment:
       - AIRFLOW__CORE__LOAD_EXAMPLES=False
-    volumes:
-      - ./airflow/dags:/usr/local/airflow/dags
-      - ./airflow/plugins:/usr/local/airflow/plugins
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+      - AIRFLOW__DATABASE__LOAD_DEFAULT_CONNECTIONS=False
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
     ports:
-      - "8084:8080"
-    depends_on: []
-    command: bash -c "airflow db init && airflow webserver"
+      - "8084:8084"
+    depends_on:
+      - postgres
+    entrypoint: ["/opt/airflow-init.sh"]
+    command: ["airflow", "webserver", "--port", "8084"]
+    volumes:
+      - ./airflow:/opt/airflow
+      - ./airflow-init.sh:/opt/airflow-init.sh
 
   dbt:
     image: ghcr.io/dbt-labs/dbt-core:1.8.1
@@ -70,3 +106,5 @@ services:
       - AZURITE_ACCOUNT_KEY=Eby8vdM02xNOcqFeqCnf2P==
     volumes:
       - ./fabric:/app
+    profiles:
+      - azure
