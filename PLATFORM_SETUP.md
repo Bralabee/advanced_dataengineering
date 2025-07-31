@@ -49,11 +49,17 @@ project-root/
 - **Working Directory:** `/usr/app`
 - **Startup:** Prints dbt version by default (customize command as needed).
 
-### 3. OCR (GPU-enabled)
-- **Base Image:** `nvidia/cuda:12.2.0-base-ubuntu22.04`
-- **Key Packages:** `python3`, `python3-pip`, `tesseract-ocr`, `libtesseract-dev`, `libgl1`, `paddleocr`
-- **Runtime:** `nvidia` (requires NVIDIA GPU and drivers)
-- **Environment:** `NVIDIA_VISIBLE_DEVICES=all`
+### 3. OCR Service Options
+- **GPU-enabled:**
+  - **Service Name:** `ocr-gpu`
+  - **Base Image:** `nvidia/cuda:12.2.0-base-ubuntu22.04`
+  - **Runtime:** `nvidia` (requires NVIDIA GPU and drivers)
+  - **Environment:** `NVIDIA_VISIBLE_DEVICES=all`
+- **CPU-only:**
+  - **Service Name:** `ocr-cpu`
+  - **Base Image:** `ubuntu:22.04`
+  - **No GPU required**
+  - **Both services:** `python3`, `python3-pip`, `tesseract-ocr`, `libtesseract-dev`, `libgl1`, `paddleocr`
 
 ### 4. Fabric (Python/conda)
 - **Base Image:** `mambaorg/micromamba:1.5.8`
@@ -94,9 +100,12 @@ cd <repo-root>
 
 ### 3. Build and Start the Platform
 ```bash
-docker-compose up --build
+# For GPU systems:
+docker-compose --profile gpu up --build
+# For CPU-only systems:
+docker-compose --profile cpu up --build
 ```
-- All services will build and start.
+- All services will build and start according to the selected profile.
 - Airflow will initialize its database and start the webserver.
 - dbt will print its version (customize as needed).
 - OCR and fabric containers will print a ready message and exit (customize as needed).
@@ -111,14 +120,15 @@ docker-compose up --build
 ## Customization
 - **Airflow:** Add DAGs to `airflow/dags/` and plugins to `airflow/plugins/`.
 - **dbt:** Place your dbt project in the `dbt/` directory.
-- **OCR:** Add/modify scripts in the `ocr/` directory and update the Dockerfile as needed.
+- **OCR:** Add/modify scripts in the `ocr/` directory and update the appropriate Dockerfile (`Dockerfile` for GPU, `Dockerfile.cpu` for CPU) as needed.
 - **Fabric:** Add/modify scripts in the `fabric/` directory and update the Dockerfile as needed.
 
 ---
 
 ## Troubleshooting
 - **Port Conflicts:** Change the host port in `docker-compose.yml` if 8084 is in use.
-- **GPU Errors:** Ensure NVIDIA drivers and container toolkit are installed and configured.
+- **GPU Errors:** Ensure NVIDIA drivers and container toolkit are installed and configured (only needed for GPU profile).
+- **OCR Build Fails (No GPU):** Use the CPU profile to build and run the OCR service on systems without a GPU.
 - **Airflow DB Error:** If Airflow fails to start, ensure the database is initialized (`airflow db init`).
 - **Python Version:** All services use Python 3.11 for maximum compatibility.
 

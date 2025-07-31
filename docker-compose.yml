@@ -1,3 +1,4 @@
+
 version: '3.8'
 services:
   airflow:
@@ -11,7 +12,7 @@ services:
       - "8084:8080"
     depends_on: []
     command: bash -c "airflow db init && airflow webserver"
-  
+
   dbt:
     image: ghcr.io/dbt-labs/dbt-core:1.8.1
     volumes:
@@ -19,7 +20,7 @@ services:
     working_dir: /usr/app
     command: ["--version"]
 
-  ocr:
+  ocr-gpu:
     build:
       context: ./ocr
       dockerfile: Dockerfile
@@ -33,6 +34,15 @@ services:
               capabilities: [gpu]
     environment:
       - NVIDIA_VISIBLE_DEVICES=all
+    profiles:
+      - gpu
+
+  ocr-cpu:
+    build:
+      context: ./ocr
+      dockerfile: Dockerfile.cpu
+    profiles:
+      - cpu
 
   fabric:
     build:
