@@ -9,4 +9,4 @@ RUN micromamba create -n fabric -c conda-forge python=3.11 -y && \
 # Install Azure Data Lake and authentication packages
 RUN micromamba run -n fabric pip install azure-storage-file-datalake azure-identity
 
-CMD ["micromamba", "run", "-n", "fabric", "python", "-c", "import azure.storage.filedatalake; print('Fabric container ready')"]
+CMD ["micromamba", "run", "-n", "fabric", "python", "test_fabric_connection.py"]

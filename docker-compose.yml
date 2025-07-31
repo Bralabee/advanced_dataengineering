@@ -1,8 +1,17 @@
-
 version: '3.8'
 services:
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    ports:
+      - "10000:10000" # Blob service
+      - "10001:10001" # Queue service
+      - "10002:10002" # Table service
+    volumes:
+      - ./azurite_data:/data
+    command: "azurite-blob --blobHost 0.0.0.0 --location /data"
+
   airflow:
-    image: apache/airflow:2.9.2-python3.11
+    image: quay.io/astronomer/astro-runtime:9.2.0
     environment:
       - AIRFLOW__CORE__LOAD_EXAMPLES=False
     volumes:
@@ -55,5 +64,9 @@ services:
       - AZURE_TENANT_ID=${AZURE_TENANT_ID}
       - AZURE_CLIENT_SECRET=${AZURE_CLIENT_SECRET}
       - AZURE_STORAGE_ACCOUNT_NAME=${AZURE_STORAGE_ACCOUNT_NAME}
+      # Azurite local development
+      - AZURITE_BLOB_ENDPOINT=http://azurite:10000/devstoreaccount1
+      - AZURITE_ACCOUNT_NAME=devstoreaccount1
+      - AZURITE_ACCOUNT_KEY=Eby8vdM02xNOcqFeqCnf2P==
     volumes:
       - ./fabric:/app
