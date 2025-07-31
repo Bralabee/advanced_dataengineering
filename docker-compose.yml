@@ -50,5 +50,10 @@ services:
       dockerfile: Dockerfile
     environment:
       - CONDA_ENV_NAME=fabric
+      # Azure credentials (set these in a .env file or your environment for security)
+      - AZURE_CLIENT_ID=${AZURE_CLIENT_ID}
+      - AZURE_TENANT_ID=${AZURE_TENANT_ID}
+      - AZURE_CLIENT_SECRET=${AZURE_CLIENT_SECRET}
+      - AZURE_STORAGE_ACCOUNT_NAME=${AZURE_STORAGE_ACCOUNT_NAME}
     volumes:
       - ./fabric:/app

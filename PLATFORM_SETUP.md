@@ -145,3 +145,30 @@ docker-compose --profile cpu up --build
 
 ## Authors
 - Platform setup and automation by Sanmi Ibitoye | : Data Engineer @ HS2.
+
+---
+
+### Azure MS Fabric Connector Setup
+To enable connectivity to Azure MS Fabric (Data Lake), the `fabric` service includes the required connector packages:
+- `azure-storage-file-datalake`
+- `azure-identity`
+
+**Credentials:**
+- Set your Azure credentials in a `.env` file (see `.env.example`):
+  - `AZURE_CLIENT_ID`
+  - `AZURE_TENANT_ID`
+  - `AZURE_CLIENT_SECRET`
+  - `AZURE_STORAGE_ACCOUNT_NAME`
+- Docker Compose will automatically pass these to the `fabric` container.
+
+**Usage:**
+- In your Python scripts, use `DefaultAzureCredential` from `azure.identity` for authentication.
+- Example:
+  ```python
+  from azure.identity import DefaultAzureCredential
+  from azure.storage.filedatalake import DataLakeServiceClient
+
+  credential = DefaultAzureCredential()
+  account_url = f"https://{os.environ['AZURE_STORAGE_ACCOUNT_NAME']}.dfs.core.windows.net"
+  service_client = DataLakeServiceClient(account_url, credential=credential)
+  ```
