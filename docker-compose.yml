@@ -1,0 +1,44 @@
+version: '3.8'
+services:
+  airflow:
+    image: apache/airflow:2.9.2-python3.11
+    environment:
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+    volumes:
+      - ./airflow/dags:/usr/local/airflow/dags
+      - ./airflow/plugins:/usr/local/airflow/plugins
+    ports:
+      - "8084:8080"
+    depends_on: []
+    command: bash -c "airflow db init && airflow webserver"
+  
+  dbt:
+    image: ghcr.io/dbt-labs/dbt-core:1.8.1
+    volumes:
+      - ./dbt:/usr/app
+    working_dir: /usr/app
+    command: ["--version"]
+
+  ocr:
+    build:
+      context: ./ocr
+      dockerfile: Dockerfile
+    runtime: nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+
+  fabric:
+    build:
+      context: ./fabric
+      dockerfile: Dockerfile
+    environment:
+      - CONDA_ENV_NAME=fabric
+    volumes:
+      - ./fabric:/app
