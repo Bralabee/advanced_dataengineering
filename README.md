@@ -61,10 +61,33 @@ This platform is a modular, production-ready data engineering stack designed for
 - Add your DAGs to `airflow/dags/` and dbt models to `dbt/`.
 - Fabric and OCR services can be extended for custom ML/data science workflows.
 
+
+## Testing the Stack
+
+1. **Test Airflow:**
+   - Open the Airflow UI at http://localhost:8084
+   - Unpause and trigger the `example_hello_world` DAG. Check the logs for the "Hello, Airflow stack is working!" message.
+
+2. **Test dbt:**
+   - Enter the dbt container: `docker-compose run --rm dbt bash`
+   - Run: `dbt run` to execute the example model.
+
+3. **Test OCR (GPU/CPU):**
+   - Check the OCR container logs: `docker-compose logs --tail=50 ocr-gpu` (or `ocr-cpu`)
+   - You should see "OCR container ready".
+
+
+## Switching to Azure Storage (Production)
+
+To use real Azure Storage instead of Azurite:
+- Update your `.env` file with your Azure Storage credentials.
+- Change service endpoints in your configuration from `http://azurite:10000/devstoreaccount1` to the Azure Storage endpoint.
+- Remove or comment out the Azurite service in `docker-compose.yml` if not needed.
+- Ensure your Fabric and other services are configured to use Azure Storage.
+
 ## Extending the Stack
-- Add new services to `docker-compose.yml` as needed.
-- Integrate with Azure by swapping Azurite for real Azure Storage and updating credentials.
-- Use Airflow to orchestrate any combination of ETL, ML, and analytics tasks.
+Add new services to `docker-compose.yml` as needed.
+Use Airflow to orchestrate any combination of ETL, ML, and analytics tasks.
 
 ---
 
