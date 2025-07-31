@@ -1,4 +1,7 @@
+
 # Advanced Data Engineering Platform
+
+> **Note:** This branch (`fabric-azure-connector`) is dedicated to setting up the foundational stack. Other developers can use this state to quickly bootstrap their own data engineering, analytics, or AI workflows. Clone this branch to get a ready-to-use, production-like environment for your projects.
 
 ## Overview
 This platform is a modular, production-ready data engineering stack designed for end-to-end ETL, analytics, and AI workflows. It leverages modern open-source and Azure-compatible tools, orchestrated via Docker Compose for local and cloud development.
