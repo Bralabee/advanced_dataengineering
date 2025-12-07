@@ -9,5 +9,5 @@ clean-targets:
 model-paths: ["models"]
 seed-paths: ["seeds"]
 macro-paths: ["macros"]
-data-paths: ["data"]
+#data-paths: ["data"]
 test-paths: ["tests"]
