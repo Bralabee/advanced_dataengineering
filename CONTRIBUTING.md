@@ -29,3 +29,7 @@ Thank you for your interest in contributing! This project is designed to help yo
 ---
 
 For questions, open an issue or contact the maintainers.
+
+## Security
+
+If you discover a security vulnerability, please report it privately to the maintainers. Do not disclose it publicly until it has been addressed.

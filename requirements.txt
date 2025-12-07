@@ -1,0 +1,2 @@
+# Python dependencies for local development (optional)
+# Add packages here if you want to develop or test locally outside Docker

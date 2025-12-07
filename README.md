@@ -1,6 +1,8 @@
 
 # Advanced Data Engineering Platform
 
+![CI](https://github.com/Bralabee/advanced_dataengineering/actions/workflows/ci.yml/badge.svg?branch=fabric-azure-connector)
+
 > **Note:** This branch (`fabric-azure-connector`) is dedicated to setting up the foundational stack. Other developers can use this state to quickly bootstrap their own data engineering, analytics, or AI workflows. Clone this branch to get a ready-to-use, production-like environment for your projects.
 
 ## Overview

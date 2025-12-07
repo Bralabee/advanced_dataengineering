@@ -1,0 +1,13 @@
+name: advanced_dataengineering
+version: 1.0.0
+profile: user
+target-path: target
+clean-targets:
+  - target
+  - dbt_modules
+  - dbt_packages
+model-paths: ["models"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+data-paths: ["data"]
+test-paths: ["tests"]
